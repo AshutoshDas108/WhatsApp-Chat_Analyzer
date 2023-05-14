@@ -1,5 +1,9 @@
+import matplotlib.pyplot as plt
+import streamlit
 from urlextract import URLExtract
 from wordcloud import WordCloud
+import pandas as pd
+from collections import Counter
 
 extract = URLExtract()
 
@@ -37,23 +41,33 @@ def create_wordcloud(selected_user, df):
     wc = WordCloud(width=500, height=500, min_font_size=10, background_color='white')
     df_wc = wc.generate(df['message'].str.cat(sep=" "))
     return df_wc
-    
+
 def most_common_words(selected_user, df):
+
+    f = open('stop_words.txt', 'r')
+    stop_words = f.read()
+
     if selected_user != 'OverAll':
         df = df[df['user'] == selected_user]
-        
-    temp = df[df['user'] != 'group_notification']
-    temp = temp[temp['user'] != '<Media omitted>\n']
-    
+
+    temp = df[df['message'] != 'group_notification']
+    temp = temp[temp['message'] != '<Media omitted>\n']
+
     words = []
-    
+
     for message in temp['message']:
         for word in message.lower().split():
             if word not in stop_words:
                 words.append(word)
-    
 
-    
+    most_common_df = pd.DataFrame(Counter(words).most_common(25))
+    return most_common_df
+
+
+
+
+
+
 
 
 
