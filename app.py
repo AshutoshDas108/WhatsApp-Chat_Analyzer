@@ -62,6 +62,30 @@ if uploaded_file is not None:
         plt.xticks(rotation='vertical')
         st.pyplot(fig)
 
+      # activity map
+
+        st.title("Activity Map")
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.header("Most busy day:")
+            busy_day = helper.week_activity(selected_user, df)
+            fig, ax = plt.subplots()
+            ax.bar(busy_day.index, busy_day.values)
+            plt.xticks(rotation='vertical')
+            st.pyplot(fig)
+
+        with col2:
+            st.header("Most busy Month:")
+            busy_day = helper.month_activity(selected_user, df)
+            fig, ax = plt.subplots()
+            ax.bar(busy_day.index, busy_day.values, color='orange')
+            plt.xticks(rotation='vertical')
+            st.pyplot(fig)
+
+        fig, ax = plt.subplots()
+
+
 
         # FINDING THE ACTIVE USERS IN GROUP
 
@@ -109,8 +133,11 @@ if uploaded_file is not None:
             st.dataframe(emoji_df)
         with col2:
             fig, ax = plt.subplots()
-            ax.pie(emoji_df[1].head(10), labels=emoji_df[0].head(10), autopct='%0.2f')
+            ax.pie(emoji_df[1].head(5), labels=emoji_df[0].head(5), autopct='%0.2f')
             st.pyplot(fig)
+
+
+
 
 
 
