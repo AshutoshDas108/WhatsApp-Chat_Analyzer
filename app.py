@@ -4,15 +4,14 @@ import helper
 import matplotlib.pyplot as plt
 
 
-st.sidebar.title("WhatsAppChatAnalyzer")
+st.sidebar.title("Whats AppChat Analyzer")
 
 uploaded_file = st.sidebar.file_uploader("Choose a file")
 if uploaded_file is not None:
     bytes_data = uploaded_file.getvalue()
     data = bytes_data.decode("utf-8")
-    #st.text(data)
+
     df = preprocessor.preprocess(data)
-    st.dataframe(df)
 
     # fetch unique users
 
@@ -27,7 +26,7 @@ if uploaded_file is not None:
 
         # STATS AREA
         num_messages, words, num_media_messages, num_links = helper.fetch_stats(selected_user, df)
-
+        st.title("Top Statistics")
         col1, col2, col3, col4 = st.columns(4)
 
         with col1:
@@ -45,6 +44,24 @@ if uploaded_file is not None:
         with col4:
             st.header("Links  Shared")
             st.title(num_links)
+
+       # Monthly Time Line
+        st.title("Monthly Timeline")
+        timeline = helper.monthly_timeline(selected_user, df)
+        fig, ax = plt.subplots()
+        plt.plot(timeline['time'], timeline['message'], color='green')
+        plt.xticks(rotation='vertical')
+        st.pyplot(fig)
+
+        # Daily TimeLine
+        st.title("Daily Timeline")
+        daily_timeline = helper.daily_timeline(selected_user, df)
+        fig, ax = plt.subplots()
+
+        plt.plot(daily_timeline['only_date'], daily_timeline['message'], color='purple')
+        plt.xticks(rotation='vertical')
+        st.pyplot(fig)
+
 
         # FINDING THE ACTIVE USERS IN GROUP
 
@@ -80,6 +97,21 @@ if uploaded_file is not None:
         st.title("Most Common words")
         st.pyplot(fig)
         #st.dataframe(most_common_df)
+
+        # Emoji Analysis
+
+        emoji_df = helper.emoji_help(selected_user, df)
+        st.title("Emoji Analysis")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.dataframe(emoji_df)
+        with col2:
+            fig, ax = plt.subplots()
+            ax.pie(emoji_df[1].head(10), labels=emoji_df[0].head(10), autopct='%0.2f')
+            st.pyplot(fig)
+
 
 
 
